@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">
+                    <span class="app-icon">🌐</span>
+                    Network Monitor
+                    <span class="version">v1.2.0</span>
+                </h1>
+            </div>
+            <div class="header-right">
+                <div class="connection-status connected">Conectado</div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <div class="nav-item active" data-section="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-section="configuracoes">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Configurações</span>
+                    </div>
+                    <div class="nav-item" data-section="relatorios">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Relatórios</span>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="content-section">
+                    <!-- Top Cards Row -->
+                    <div class="cards-grid">
+                        <!-- Google DNS Card -->
+                        <div class="card" id="googleDnsCard">
+                            <div class="card-header">
+                                <span class="card-icon">🌐</span>
+                                <span class="card-title">Google DNS</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="latency">-- ms</div>
+                                <div class="target-ip">8.8.8.8</div>
+                                <div class="status verificando">Verificando...</div>
+                            </div>
+                        </div>
+
+                        <!-- Gateway Card -->
+                        <div class="card" id="gatewayCard">
+                            <div class="card-header">
+                                <span class="card-icon">🏠</span>
+                                <span class="card-title">Gateway</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="latency">-- ms</div>
+                                <div class="target-ip">Padrão da rede</div>
+                                <div class="status verificando">Verificando...</div>
+                            </div>
+                        </div>
+
+                        <!-- Speed Card -->
+                        <div class="card" id="speedCard">
+                            <div class="card-header">
+                                <span class="card-icon">📊</span>
+                                <span class="card-title">Velocidade</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="speed-row">
+                                    <span class="speed-label">Download</span>
+                                    <span class="download-speed">-- Mbps</span>
+                                </div>
+                                <div class="speed-row">
+                                    <span class="speed-label">Upload</span>
+                                    <span class="upload-speed">-- Mbps</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row -->
+                    <div class="bottom-grid">
+                        <!-- Custom Targets -->
+                        <div class="card custom-targets-card">
+                            <div class="card-header">
+                                <span class="card-icon">🎯</span>
+                                <span class="card-title">Destinos Personalizados</span>
+                            </div>
+                            <div class="card-content">
+                                <div id="customTargetsContainer">
+                                    <p class="no-targets">Nenhum destino personalizado configurado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Chart -->
+                        <div class="card chart-card">
+                            <div class="card-header">
+                                <span class="card-icon">🚀</span>
+                                <span class="card-title">Velocidade de Rede</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <canvas id="networkChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-icon">📈</span>
+                                <span class="stat-title">Estatísticas em Tempo Real</span>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-row">
+                                    <span class="stat-label">Última Atualização</span>
+                                    <span class="last-update">--:--:--</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Pings Enviados</span>
+                                    <span class="pings-count">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Tempo Online</span>
+                                    <span class="uptime-value">00:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Configurações Section -->
+                <section id="configuracoes" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>⚙️ Configurações</h2>
+                        <p>Gerencie destinos personalizados e configurações do sistema</p>
+                    </div>
+
+                    <!-- Add Target Form -->
+                    <div class="config-card">
+                        <div class="config-header">
+                            <h3>➕ Adicionar Destino Personalizado</h3>
+                        </div>
+                        <div class="config-content">
+                            <form id="addTargetForm" class="target-form">
+                                <div class="form-group">
+                                    <label for="targetIp">Endereço IP ou Hostname:</label>
+                                    <input type="text" id="targetIp" name="ip" placeholder="Ex: 1.1.1.1 ou google.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="targetName">Nome do Destino:</label>
+                                    <input type="text" id="targetName" name="name" placeholder="Ex: Cloudflare DNS">
+                                </div>
+                                <button type="submit" class="add-btn">Adicionar Destino</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Targets List -->
+                    <div class="config-card">
+                        <div class="config-header">
+                            <h3>📋 Destinos Configurados</h3>
+                        </div>
+                        <div class="config-content">
+                            <div id="customTargetsList">
+                                <p class="loading">Carregando destinos...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Relatórios Section -->
+                <section id="relatorios" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>📋 Relatórios</h2>
+                        <p>Visualize falhas detectadas e relatórios gerados automaticamente</p>
+                    </div>
+
+                    <!-- Active Failures -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>🚨 Falhas Ativas</h3>
+                        </div>
+                        <div class="report-content">
+                            <div id="activeFailures">
+                                <p class="loading">Carregando falhas ativas...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Summary -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>📊 Resumo (Últimos 7 dias)</h3>
+                        </div>
+                        <div class="report-content">
+                            <div id="reportSummary">
+                                <p class="loading">Carregando resumo...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports List -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>📄 Relatórios Disponíveis</h3>
+                            <div class="report-actions">
+                                <button id="generateReport" class="generate-btn">📊 Gerar Relatório</button>
+                                <button id="refreshReports" class="refresh-btn">🔄 Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="report-content">
+                            <div id="reportsList">
+                                <p class="loading">Carregando relatórios...</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Edit Target Modal -->
+    <div id="editTargetModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Editar Destino</h3>
+                <button class="close-btn" onclick="networkMonitor.closeEditModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editTargetName">Nome do Destino:</label>
+                    <input type="text" id="editTargetName" placeholder="Nome do destino">
+                </div>
+                <div class="form-group">
+                    <label for="editTargetIp">Endereço IP:</label>
+                    <input type="text" id="editTargetIp" placeholder="IP ou hostname">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editTargetEnabled">
+                        <span class="checkmark"></span>
+                        Destino ativo
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="save-btn">💾 Salvar Alterações</button>
+                <button class="cancel-btn">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
+
